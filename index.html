@@ -1,57 +1,125 @@
 <!doctype html>
 <html lang="en">
 <head>
-    <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width,initial-scale=1" />
-    <title>Homecoming Registration Opens – MHS Alumni Association</title>
-    <style>
-        body {
-            text-align: center;
-            font-family: Arial, sans-serif;
-            background-color: #ffffff;
-            margin: 0;
-            padding: 0;
-        }
-        img {
-            max-width: 200px;
-            margin: 20px auto;
-            display: block;
-        }
-        h1 {
-            margin-top: 10px;
-            font-size: 1.8em;
-            color: #5b3924; /* Milton Hershey brown */
-        }
-        #countdown {
-            font-size: 2em;
-            font-weight: bold;
-            margin-top: 10px;
-            color: #c69214; /* Milton Hershey gold */
-        }
-    </style>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Homecoming Registration Opens – MHS Alumni Association</title>
+  <style>
+    body {
+      text-align: center;
+      font-family: Arial, sans-serif;
+      background-color: #c69214; /* MHS Gold */
+      margin: 0;
+      padding: 0;
+      color: #ffffff;
+      animation: fadeInBody 1s ease-in;
+    }
+    img {
+      max-width: 80%;
+      height: auto;
+      margin: 20px auto;
+      display: block;
+      opacity: 0;
+      animation: fadeIn 1s ease-in forwards;
+      animation-delay: 0.3s;
+    }
+    h1 {
+      margin-top: 10px;
+      font-size: 1.8em;
+      color: #ffffff;
+      opacity: 0;
+      animation: fadeIn 1s ease-in forwards;
+      animation-delay: 0.6s;
+    }
+    #countdown {
+      font-size: 2em;
+      font-weight: bold;
+      margin-top: 10px;
+      color: #5b3924; /* MHS Brown */
+      background-color: rgba(255, 255, 255, 0.85);
+      display: inline-block;
+      padding: 10px 20px;
+      border-radius: 10px;
+      opacity: 0;
+      animation: fadeIn 1s ease-in forwards;
+      animation-delay: 0.9s;
+    }
+
+    /* Pulse when within 24 hours */
+    .urgent {
+      animation: fadeIn 1s ease-in forwards, pulse 1.2s ease-in-out 0.9s infinite;
+    }
+    @keyframes pulse {
+      0% { transform: scale(1); }
+      50% { transform: scale(1.06); }
+      100% { transform: scale(1); }
+    }
+
+    /* Fade-ins */
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(10px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    @keyframes fadeInBody {
+      from { opacity: 0; }
+      to { opacity: 1; }
+    }
+
+    /* Respect reduced motion */
+    @media (prefers-reduced-motion: reduce) {
+      * { animation: none !important; }
+    }
+
+    /* Mobile tweaks */
+    @media (max-width: 600px) {
+      h1 { font-size: 1.4em; margin: 10px; }
+      #countdown { font-size: 1.5em; padding: 8px 15px; }
+      img { max-width: 70%; }
+    }
+  </style>
 </head>
 <body>
 
-    <!-- Logo -->
-    <img src="logo_transparent.png" 
-         alt="MHS Alumni Association Logo">
+  <!-- Logo -->
+  <img src="logo_transparent.png" alt="MHS Alumni Association Logo">
 
-    <!-- Countdown -->
-    <h1>Homecoming Registration Opens In:</h1>
-    <div id="countdown"></div>
+  <!-- Countdown -->
+  <h1>Homecoming Registration Opens In:</h1>
+  <div id="countdown"></div>
 
-    <script>
-        // Set the date for countdown
-        var countDownDate = new Date("Aug 15, 2025 09:00:00").getTime();
+  <script>
+    // Target: 2025-09-01 00:00:00 Eastern Time
+    // Eastern is UTC-4 in September 2025, so that's 2025-09-01T04:00:00Z
+    var countDownDate = new Date("2025-09-01T04:00:00Z").getTime();
 
-        var countdownfunction = setInterval(function() {
-            var now = new Date().getTime();
-            var distance = countDownDate - now;
+    var countdownEl = document.getElementById("countdown");
+    var tick = setInterval(function(){
+      var now = new Date().getTime();
+      var diff = countDownDate - now;
 
-            var days = Math.floor(distance / (1000 * 60 * 60 * 24));
-            var hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
-            var minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
-            var seconds = Math.floor((distance % (1000 * 60)) / 1000);
+      var days    = Math.floor(diff / (1000 * 60 * 60 * 24));
+      var hours   = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+      var minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
+      var seconds = Math.floor((diff % (1000 * 60)) / 1000);
 
-            document.getElementById("countdown").innerHTML =
-                days + "d " + hours + "h
+      if (diff <= 0){
+        clearInterval(tick);
+        countdownEl.classList.remove("urgent");
+        countdownEl.textContent = "Registration is Open!";
+        return;
+      }
+
+      countdownEl.textContent = days + "d " + hours + "h " + minutes + "m " + seconds + "s ";
+
+      // Pulse effect for last 24 hours
+      if (diff <= 24 * 60 * 60 * 1000){
+        countdownEl.classList.add("urgent");
+      } else {
+        countdownEl.classList.remove("urgent");
+      }
+    }, 1000);
+  </script>
+
+</body>
+</html>
+
