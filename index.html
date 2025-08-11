@@ -1,68 +1,85 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Homecoming Countdown</title>
-    <style>
-        body {
-            background-color: white;
-            color: #4B2E2E;
-            text-align: center;
-            font-family: Arial, sans-serif;
-            margin: 0;
-            padding: 0;
-        }
-        img {
-            max-width: 300px;
-            margin-top: 50px;
-        }
-        h1 {
-            margin-top: 20px;
-            font-size: 28px;
-        }
-        #countdown {
-            font-size: 32px;
-            font-weight: bold;
-            margin-top: 20px;
-            padding: 10px 20px;
-            background: #fff3e0;
-            border-radius: 10px;
-            display: inline-block;
-            color: #4B2E2E;
-        }
-    </style>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Homecoming Registration Opens – MHS Alumni Association</title>
+  <style>
+    :root{
+      --mhs-gold:#c69214;
+      --mhs-brown:#5b3924;
+      --ink:#1f1f1f;
+      --muted:#6b7280;
+      --ring: rgba(198,146,20,.28);
+    }
+    *{box-sizing:border-box}
+    body{margin:0;background:#fff;color:var(--ink);
+      font-family:system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif}
+    .wrap{min-height:100svh;display:grid;place-items:center;padding:24px}
+    .card{width:min(900px,100%);background:#fff;border-radius:20px;padding:28px;text-align:center}
+    .logo{margin:4px auto 8px}
+    .logo img{
+      width: clamp(160px, 28vw, 300px);
+      height:auto;display:block;margin:0 auto;
+      filter: drop-shadow(0 1px 0 rgba(0,0,0,.06));
+    }
+    h1{margin:12px 0 6px;font-weight:800;font-size:clamp(22px,3.2vw,34px);color:var(--mhs-brown);letter-spacing:.2px}
+    .sub{margin:0 0 18px;color:var(--muted);font-size:14px}
+
+    .timer{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;max-width:680px;margin:12px auto 0;width:100%}
+    .unit{border:1px solid #ececec;border-radius:14px;padding:16px 10px;
+      background:linear-gradient(180deg,#fff,#fafafa);
+      box-shadow:0 1px 0 #f5f5f5,0 0 0 4px transparent;transition:box-shadow .25s ease}
+    .urgent .unit{box-shadow:0 1px 0 #f5f5f5,0 0 0 4px var(--ring)}
+    .num{font-variant-numeric:tabular-nums;font-weight:800;font-size:clamp(28px,5.6vw,44px);line-height:1;color:var(--mhs-brown)}
+    .lab{margin-top:6px;font-size:12px;letter-spacing:.14em;color:var(--muted);text-transform:uppercase}
+
+    @media (max-width:560px){.timer{grid-template-columns:repeat(2,1fr)}}
+    @media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+  </style>
 </head>
 <body>
+  <main class="wrap">
+    <section class="card" aria-label="Countdown to Homecoming Registration opening">
+      <div class="logo">
+        <!-- Keep this filename at repo root next to index.html -->
+        <img src="logo_transparent.png?v=3" alt="MHS Alumni Association Logo">
+      </div>
 
-    <img src="logo_transparent.png" alt="MHS Alumni Association Logo">
+      <h1>Homecoming Registration Opens</h1>
+      <p class="sub">September 1, 2025 • 12:00 AM Eastern</p>
 
-    <h1>Homecoming Registration Opens In:</h1>
-    <div id="countdown"></div>
+      <div id="timer" class="timer" aria-live="polite">
+        <div class="unit"><div id="d" class="num">0</div><div class="lab">Days</div></div>
+        <div class="unit"><div id="h" class="num">00</div><div class="lab">Hours</div></div>
+        <div class="unit"><div id="m" class="num">00</div><div class="lab">Minutes</div></div>
+        <div class="unit"><div id="s" class="num">00</div><div class="lab">Seconds</div></div>
+      </div>
+    </section>
+  </main>
 
-    <script>
-        // Set the date we're counting down to
-        var countDownDate = new Date("Sep 1, 2025 00:00:00").getTime();
+  <script>
+    // 12:00 AM Eastern on 2025-09-01 (EDT=UTC-4) => 2025-09-01T04:00:00Z
+    const target = new Date("2025-09-01T04:00:00Z").getTime();
+    const d=document.getElementById("d"),h=document.getElementById("h"),
+          m=document.getElementById("m"),s=document.getElementById("s"),
+          timerEl=document.getElementById("timer");
 
-        // Update the countdown every second
-        var x = setInterval(function() {
-            var now = new Date().getTime();
-            var distance = countDownDate - now;
+    const pad=n=>String(n).padStart(2,"0");
+    function tick(){
+      const now=Date.now(); let diff=Math.max(0,target-now);
+      const days=Math.floor(diff/86400000); diff-=days*86400000;
+      const hrs =Math.floor(diff/3600000);  diff-=hrs*3600000;
+      const mins=Math.floor(diff/60000);     diff-=mins*60000;
+      const secs=Math.floor(diff/1000);
 
-            var days = Math.floor(distance / (1000 * 60 * 60 * 24));
-            var hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
-            var minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
-            var seconds = Math.floor((distance % (1000 * 60)) / 1000);
+      d.textContent=days; h.textContent=pad(hrs); m.textContent=pad(mins); s.textContent=pad(secs);
 
-            document.getElementById("countdown").innerHTML = days + "d " + hours + "h " 
-            + minutes + "m " + seconds + "s ";
-
-            if (distance < 0) {
-                clearInterval(x);
-                document.getElementById("countdown").innerHTML = "Registration is Open!";
-            }
-        }, 1000);
-    </script>
-
+      // highlight last 24h
+      if (target-now <= 24*60*60*1000) timerEl.classList.add("urgent");
+      else timerEl.classList.remove("urgent");
+    }
+    tick(); const t=setInterval(()=>{ tick(); if(Date.now()>=target) clearInterval(t); },1000);
+  </script>
 </body>
 </html>
